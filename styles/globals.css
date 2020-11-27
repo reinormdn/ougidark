@@ -14,3 +14,7 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.list-group-item {
+  padding: 0 !important;
+}
