@@ -2,23 +2,23 @@ export default async (_, res) => {
     var queryactivities = `
     query activities {
         Page(page: 1, perPage: 5) {
-        activities(userId: 454750, sort: ID_DESC) {
-            __typename
-            ... on ListActivity {
-            media {
-                title {
-                romaji
-                }
-                coverImage {
-                large
+            activities(userId: 454750, sort: ID_DESC) {
+                __typename
+                ... on ListActivity {
+                    media {
+                        title {
+                        romaji
+                        }
+                        coverImage {
+                        large
+                        }
+                    }
+                    status
+                    progress
+                    siteUrl
+                    createdAt
                 }
             }
-            status
-            progress
-            siteUrl
-            createdAt
-            }
-        }
         }
     }
     `
@@ -35,14 +35,14 @@ export default async (_, res) => {
 
     var queryprofile = `
     query {
-        User(name: "wetle174cm"){
-        id
-        name
-        about
-        siteUrl
-        avatar {
-            large
-        }
+        User(id: 454750){
+            id
+            name
+            about
+            siteUrl
+            avatar {
+                large
+            }
         }
     }
     `
