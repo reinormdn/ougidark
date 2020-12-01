@@ -7,10 +7,10 @@ export default async (_, res) => {
                 ... on ListActivity {
                     media {
                         title {
-                        romaji
+                            romaji
                         }
                         coverImage {
-                        large
+                            large
                         }
                     }
                     status

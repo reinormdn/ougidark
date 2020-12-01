@@ -66,12 +66,14 @@ function Home() {
           var current_date = current_timestamp.getDate()
           var current_hour = current_timestamp.getHours()
           var current_minute = current_timestamp.getMinutes()
+          var current_second = current_timestamp.getSeconds()
 
           var activity_year = activity_timestamp.getFullYear()
           var activity_month = activity_timestamp.getMonth()+1
           var activity_date = activity_timestamp.getDate()
           var activity_hour = activity_timestamp.getHours()
           var activity_minute = activity_timestamp.getMinutes()
+          var activity_second = activity_timestamp.getSeconds()
 
           if ((current_year-activity_year) >= 1) {
             var createdTime = pad(current_year-activity_year) + " " + (((current_year-activity_year) >= 2) ? "years" : "year")
@@ -83,6 +85,8 @@ function Home() {
             var createdTime = pad(current_hour-activity_hour) + " " + (((current_hour-activity_hour) >= 2) ? "hours" : "hour")
           } else if ((current_minute-activity_minute) >= 1) {
             var createdTime = pad(current_minute-activity_minute) + " " + (((current_minute-activity_minute)) >= 2 ? "minutes" : "minute")
+          } else if ((current_second-activity_second) >= 1) {
+            var createdTime = pad(current_second-activity_second) + " " + (((current_second-activity_second)) >= 2 ? "seconds" : "second")
           }
 
           createdTime += " ago"
