@@ -3,6 +3,13 @@ import styles from '../styles/Home.module.css'
 import useSWR from 'swr'
 import fetch from 'unfetch'
 import Link from 'next/link'
+import TimeAgo from 'javascript-time-ago'
+import en from 'javascript-time-ago/locale/en'
+
+TimeAgo.addLocale(en)
+ 
+// Create formatter (English).
+const timeAgo = new TimeAgo('en-US')
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -17,7 +24,7 @@ function pad(val){
 
 function Home() {
   // const { data: anilistProfile, erroranilistProfile } = useSWR('/api/anilist-profile', fetcher)
-  const { data: anilistActivities, erroranilistActivities } = useSWR('/api/anilist-activities', fetcher)
+  const { data: anilistActivities, erroranilistActivities } = useSWR('/api/anilist-activities', fetcher, { revalidateOnFocus: true, refreshInterval: 1000 })
 
   if (erroranilistActivities) return <div>failed to load</div>
   if (!anilistActivities) return <div className={styles.container}>
@@ -61,35 +68,13 @@ function Home() {
           var current_timestamp = new Date()
           var activity_timestamp = new Date(useractivity.createdAt*1000)
 
-          var current_year = current_timestamp.getFullYear()
-          var current_month = current_timestamp.getMonth()+1
-          var current_date = current_timestamp.getDate()
-          var current_hour = current_timestamp.getHours()
-          var current_minute = current_timestamp.getMinutes()
-          var current_second = current_timestamp.getSeconds()
+          var msPerMinute = 60 * 1000;
+          var msPerHour = msPerMinute * 60;
+          var msPerDay = msPerHour * 24;
+          var msPerMonth = msPerDay * 30;
+          var msPerYear = msPerDay * 365;
 
-          var activity_year = activity_timestamp.getFullYear()
-          var activity_month = activity_timestamp.getMonth()+1
-          var activity_date = activity_timestamp.getDate()
-          var activity_hour = activity_timestamp.getHours()
-          var activity_minute = activity_timestamp.getMinutes()
-          var activity_second = activity_timestamp.getSeconds()
-
-          if ((current_year-activity_year) >= 1) {
-            var createdTime = pad(current_year-activity_year) + " " + (((current_year-activity_year) >= 2) ? "years" : "year")
-          } else if ((current_month-activity_month) >= 1) {
-            var createdTime = pad(current_month-activity_month) + " " + (((current_month-activity_month) >= 2) ? "months" : "month")
-          } else if ((current_date-activity_date) >= 1) {
-            var createdTime = pad(current_date-activity_date) + " " + (((current_date-activity_date) >= 2) ? "days" : "day")
-          } else if ((current_hour-activity_hour) >= 1) {
-            var createdTime = pad(current_hour-activity_hour) + " " + (((current_hour-activity_hour) >= 2) ? "hours" : "hour")
-          } else if ((current_minute-activity_minute) >= 1) {
-            var createdTime = pad(current_minute-activity_minute) + " " + (((current_minute-activity_minute)) >= 2 ? "minutes" : "minute")
-          } else if ((current_second-activity_second) >= 1) {
-            var createdTime = pad(current_second-activity_second) + " " + (((current_second-activity_second)) >= 2 ? "seconds" : "second")
-          }
-
-          createdTime += " ago"
+          var createdTime = timeAgo.format(activity_timestamp)
 
           var status = useractivity.status
           var progress = useractivity.progress
