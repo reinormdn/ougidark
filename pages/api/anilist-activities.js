@@ -1,7 +1,7 @@
 export default async (_, res) => {
     var queryactivities = `
     query activities {
-        Page(page: 1, perPage: 5) {
+        Page(page: 1, perPage: 10) {
             activities(userId: 454750, sort: ID_DESC) {
                 __typename
                 ... on ListActivity {
@@ -42,6 +42,22 @@ export default async (_, res) => {
             siteUrl
             avatar {
                 large
+            }
+            bannerImage
+            favourites(page: 1) {
+                characters(perPage: 20, page: 1) {
+                    nodes {
+                        name {
+                            full
+                            native
+                        }
+                        image {
+                            large
+                            medium
+                        }
+                        siteUrl
+                    }
+                }
             }
         }
     }
