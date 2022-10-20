@@ -16,22 +16,27 @@ const fetcher = (url) => fetch(url).then((r) => r.json())
 
 function pad(val) {
   return val < 10 ? val : val
-  // return (val < 10) ? '0' + val : val;
 }
 
 function Home() {
-  // const { data: anilistProfile, erroranilistProfile } = useSWR('/api/anilist-profile', fetcher)
   const { data: anilistActivities, erroranilistActivities } = useSWR(
     "/api/anilist-activities",
     fetcher,
     { revalidateOnFocus: true, refreshInterval: 1000 }
   )
 
+  const { data: spotifyCurrentPlaying, errorspotifyCurrentPlaying } = useSWR(
+    "/api/spotify-currentPlaying",
+    fetcher,
+    { revalidateOnFocus: true, refreshInterval: 5000 }
+  )
+
   const capitalizeFirst = (str) => {
     return str.charAt(0).toUpperCase() + str.slice(1)
   }
 
-  if (erroranilistActivities) return <div>failed to load</div>
+  if (erroranilistActivities || errorspotifyCurrentPlaying)
+    return <div>failed to load</div>
   return (
     <div className={styles.container}>
       <Head>
@@ -87,16 +92,134 @@ function Home() {
 
             <div className="row gx-3">
               <div className="col-lg-4 d-none d-lg-block">
-                <h5 className="h5">Characters</h5>
+                {!spotifyCurrentPlaying.isPlaying ? (
+                  <h5 className="h5">Not Listening</h5>
+                ) : (
+                  <h5 className="h5">Listening to Spotify</h5>
+                )}
+                {/* <Tilt tiltReverse={true} tiltMaxAngleX={8} tiltMaxAngleY={8}> */}
+                {!spotifyCurrentPlaying.isPlaying ? (
+                  <div className="list-group pb-3 mb-2 rounded-0 border-bottom border-2">
+                    <div
+                      className="position-relative"
+                      style={{ overflow: "hidden" }}
+                    >
+                      <div className="list-group-item list-group-item-action position-relative">
+                        <div className="row">
+                          <div className="col-auto">
+                            <img
+                              src={`https://community.spotify.com/t5/image/serverpage/image-id/25294i2836BD1C1A31BDF2?v=v2`}
+                              alt={`Spotify`}
+                              title={`Spotify`}
+                              className={`spotify-image`}
+                            />
+                          </div>
+                          <div className="col ps-1 pe-3">
+                            <div className="row gx-2 py-2 pe-2">
+                              <div className="col">
+                                <h5
+                                  className={`mb-1 ` + `${styles.h5}`}
+                                  style={{ verticalAlign: "middle" }}
+                                >
+                                  <b className="">-</b>
+                                  <br />
+                                  <small>-</small>
+                                </h5>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="list-group pb-3 mb-2 rounded-0 border-bottom border-2">
+                    <div
+                      className="position-relative"
+                      style={{ overflow: "hidden" }}
+                    >
+                      <img
+                        src={
+                          spotifyCurrentPlaying.currentPlaying.item.album
+                            .images[1].url
+                        }
+                        className="position-absolute w-100 h-100 bg-spotify-current"
+                      />
+                      <a
+                        href={
+                          spotifyCurrentPlaying.currentPlaying.item
+                            .external_urls.spotify
+                        }
+                        target="_blank"
+                        className="list-group-item list-group-item-action position-relative"
+                        style={{ zIndex: "2" }}
+                      >
+                        <div className="row">
+                          <div className="col-auto">
+                            <img
+                              src={
+                                spotifyCurrentPlaying.currentPlaying.item.album
+                                  .images[1].url
+                              }
+                              alt={
+                                spotifyCurrentPlaying.currentPlaying.item.name
+                              }
+                              title={
+                                spotifyCurrentPlaying.currentPlaying.item.name
+                              }
+                              className={`spotify-image`}
+                            />
+                          </div>
+                          <div className="col ps-1 pe-3">
+                            <div className="row gx-2 py-2 pe-2">
+                              <div className="col">
+                                <h5
+                                  className={`mb-1 ` + `${styles.h5}`}
+                                  style={{ verticalAlign: "middle" }}
+                                >
+                                  <b className="text-primary">
+                                    {
+                                      spotifyCurrentPlaying.currentPlaying.item
+                                        .name
+                                    }
+                                  </b>
+                                  <br />
+                                  <small>
+                                    {
+                                      spotifyCurrentPlaying.currentPlaying.item
+                                        .artists[0].name
+                                    }
+                                  </small>
+                                </h5>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                )}
+                {/* </Tilt> */}
+
+                <h5 className="h5">Fav. Characters</h5>
                 {/* <div className="list-group">
                 <div className="list-group-item p-3"> */}
                 {/* <div className="card">
                   <div className="card-body"> */}
-                    <div className="row gx-2">
-                      {anilistActivities.user.data.User.favourites.characters.nodes.map(
-                        (usercharafav, i) => {
-                          return (
-                            <div className="col-4 col-xl-2_5 mb-2" key={i}>
+                <div className="row gx-2">
+                  {anilistActivities.user.data.User.favourites.characters.nodes.map(
+                    (usercharafav, i) => {
+                      return (
+                        <div className="col-4 col-xl-2_5 mb-2" key={i}>
+                          <Tilt
+                            tiltEnable={false}
+                            tiltReverse={true}
+                            glareEnable={true}
+                            glareMaxOpacity={0.9}
+                            glareColor="#ffffff3a"
+                            glarePosition="all"
+                          >
+                            <div>
                               <a href={usercharafav.siteUrl} target="_blank">
                                 <img
                                   src={usercharafav.image.large}
@@ -106,17 +229,19 @@ function Home() {
                                 />
                               </a>
                             </div>
-                          )
-                        }
-                      )}
-                    </div>
-                  {/* </div>
+                          </Tilt>
+                        </div>
+                      )
+                    }
+                  )}
+                </div>
+                {/* </div>
                 </div> */}
                 {/* </div>
               </div> */}
               </div>
               <div className="col-lg-8">
-                <h5 className="h5">Activity</h5>
+                <h5 className="h5">Anilist Activity</h5>
                 <div className="row gx-2">
                   {anilistActivities.activities.data.Page.activities.map(
                     (useractivity, i) => {
@@ -148,45 +273,62 @@ function Home() {
 
                       return (
                         <div className="col-xl-6" key={i}>
-                          <Tilt tiltReverse={true}>
+                          <Tilt
+                            tiltReverse={true}
+                            tiltMaxAngleX={8}
+                            tiltMaxAngleY={8}
+                          >
                             <div className="list-group mb-2">
-                              <a
-                                href={useractivity.siteUrl}
-                                target="_blank"
-                                className="list-group-item list-group-item-action flex-column align-items-start"
+                              <div
+                                className="position-relative"
+                                style={{ overflow: "hidden" }}
                               >
-                                <div className="row">
-                                  <div className="col-auto">
-                                    <img
-                                      src={useractivity.media.coverImage.large}
-                                      alt={useractivity.media.title.romaji}
-                                      title={useractivity.media.title.romaji}
-                                      className={`${styles.headerCoverImage}`}
-                                    />
-                                  </div>
-                                  <div className="col ps-1 pe-3">
-                                    <div className="row gx-2 py-2 pe-2">
-                                      <div className="col">
-                                        <h5
-                                          className={`mb-1 ` + `${styles.h5}`}
-                                          style={{ verticalAlign: "middle" }}
-                                        >
-                                          <b className="text-primary">
-                                            {useractivity.media.title.romaji}
-                                          </b>
-                                          <br />
-                                          <small>{status}</small>
-                                        </h5>
-                                      </div>
-                                      <div className="col-auto">
-                                        <h5 style={{ fontSize: ".975rem" }}>
-                                          <small>{createdTime}</small>
-                                        </h5>
+                                {/* <img
+                                  src={
+                                    useractivity.media.coverImage.medium
+                                  }
+                                  className="position-absolute w-100 h-100 bg-spotify-current"
+                                /> */}
+                                <a
+                                  href={useractivity.siteUrl}
+                                  target="_blank"
+                                  className="list-group-item list-group-item-action2 flex-column align-items-start"
+                                >
+                                  <div className="row">
+                                    <div className="col-auto">
+                                      <img
+                                        src={
+                                          useractivity.media.coverImage.medium
+                                        }
+                                        alt={useractivity.media.title.romaji}
+                                        title={useractivity.media.title.romaji}
+                                        className={`${styles.headerCoverImage}`}
+                                      />
+                                    </div>
+                                    <div className="col ps-1 pe-3">
+                                      <div className="row gx-2 py-2 pe-2">
+                                        <div className="col">
+                                          <h5
+                                            className={`mb-1 ` + `${styles.h5}`}
+                                            style={{ verticalAlign: "middle" }}
+                                          >
+                                            <b className="text-primary">
+                                              {useractivity.media.title.romaji}
+                                            </b>
+                                            <br />
+                                            <small>{status}</small>
+                                          </h5>
+                                        </div>
+                                        <div className="col-auto">
+                                          <h5 style={{ fontSize: ".975rem" }}>
+                                            <small>{createdTime}</small>
+                                          </h5>
+                                        </div>
                                       </div>
                                     </div>
                                   </div>
-                                </div>
-                              </a>
+                                </a>
+                              </div>
                             </div>
                           </Tilt>
                         </div>
@@ -205,7 +347,7 @@ function Home() {
               >
                 Vercel
               </a>{" "}
-              | <code>v0.2A</code>
+              | <code>v0.2B</code>
             </footer>
           </div>
         </main>
