@@ -1,7 +1,7 @@
 export default async (_, res) => {
   var queryactivities = `
     query activities {
-        Page(page: 1, perPage: 10) {
+        Page(page: 1, perPage: 5) {
             activities(userId: 454750, sort: ID_DESC) {
                 __typename
                 ... on ListActivity {

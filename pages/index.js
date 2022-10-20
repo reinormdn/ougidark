@@ -6,6 +6,7 @@ import Link from "next/link"
 import TimeAgo from "javascript-time-ago"
 import en from "javascript-time-ago/locale/en"
 import Tilt from "react-parallax-tilt"
+import * as dotaconstantsHeroes from "dotaconstants/build/heroes.json"
 
 TimeAgo.addLocale(en)
 
@@ -22,7 +23,7 @@ function Home() {
   const { data: anilistActivities, erroranilistActivities } = useSWR(
     "/api/anilist-activities",
     fetcher,
-    { revalidateOnFocus: true, refreshInterval: 1000 }
+    { revalidateOnFocus: true, refreshInterval: 5000 }
   )
 
   const { data: spotifyCurrentPlaying, errorspotifyCurrentPlaying } = useSWR(
@@ -31,11 +32,21 @@ function Home() {
     { revalidateOnFocus: true, refreshInterval: 5000 }
   )
 
+  const { data: opendotaRecentMatches, erroropendotaRecentMatches } = useSWR(
+    "/api/opendota-recentMatches",
+    fetcher,
+    { revalidateOnFocus: true, refreshInterval: 10000 }
+  )
+
   const capitalizeFirst = (str) => {
     return str.charAt(0).toUpperCase() + str.slice(1)
   }
 
-  if (erroranilistActivities || errorspotifyCurrentPlaying)
+  if (
+    erroranilistActivities ||
+    errorspotifyCurrentPlaying ||
+    erroropendotaRecentMatches
+  )
     return <div>failed to load</div>
   return (
     <div className={styles.container}>
@@ -45,7 +56,7 @@ function Home() {
         <link rel="preconnect" href="https://fonts.gstatic.com" />
       </Head>
 
-      {!anilistActivities ? (
+      {!anilistActivities || !spotifyCurrentPlaying || !opendotaRecentMatches ? (
         <div
           className={styles.main}
           style={{ justifyContent: "center", minHeight: "100vh" }}
@@ -240,7 +251,7 @@ function Home() {
                 {/* </div>
               </div> */}
               </div>
-              <div className="col-lg-8">
+              <div className="col-lg-4">
                 <h5 className="h5">Anilist Activity</h5>
                 <div className="row gx-2">
                   {anilistActivities.activities.data.Page.activities.map(
@@ -272,7 +283,7 @@ function Home() {
                       status = capitalizeFirst(status)
 
                       return (
-                        <div className="col-xl-6" key={i}>
+                        <div className="col-xl-12" key={i}>
                           <Tilt
                             tiltReverse={true}
                             tiltMaxAngleX={8}
@@ -337,6 +348,125 @@ function Home() {
                   )}
                 </div>
               </div>
+              <div className="col-lg-4 d-none d-lg-block">
+                <h5 className="h5">Dota Recent Matches</h5>
+                {!opendotaRecentMatches ? (
+                  <div>-</div>
+                ) : (
+                  <div className="pb-2 border-bottom border-2">
+                    {opendotaRecentMatches.recentMatches.map(
+                      (recentMatches, i) => {
+                        var playerTeam = ""
+
+                        if (recentMatches.player_slot <= 127) {
+                          playerTeam = "Radiant"
+                        } else {
+                          playerTeam = "Dire"
+                        }
+                        return (
+                          <div className="list-group mb-2 rounded-0" key={i}>
+                            <div
+                              className="position-relative"
+                              style={{ overflow: "hidden" }}
+                            >
+                              <img
+                                src={
+                                  `https://api.opendota.com` +
+                                  dotaconstantsHeroes[recentMatches.hero_id].img
+                                }
+                                className="position-absolute w-100 h-100 bg-dota-recent"
+                              />
+                              <a
+                                href={`#`}
+                                target="_blank"
+                                className="list-group-item list-group-item-action3 position-relative"
+                                style={{ zIndex: "2" }}
+                              >
+                                <div className="row">
+                                  <div className="col-auto">
+                                    <img
+                                      src={
+                                        `https://api.opendota.com` +
+                                        dotaconstantsHeroes[
+                                          recentMatches.hero_id
+                                        ].img
+                                      }
+                                      alt={
+                                        dotaconstantsHeroes[
+                                          recentMatches.hero_id
+                                        ].localized_name
+                                      }
+                                      title={
+                                        dotaconstantsHeroes[
+                                          recentMatches.hero_id
+                                        ].localized_name
+                                      }
+                                      className={`dota-recent-image`}
+                                    />
+                                  </div>
+                                  <div className="col ps-1 pe-3">
+                                    <div className="row gx-3 py-2 pe-2">
+                                      <div className="col text-truncate">
+                                        <h5
+                                          className={`mb-1 ` + `${styles.h5}`}
+                                          style={{ verticalAlign: "middle" }}
+                                        >
+                                          <b className="text-primary">
+                                            {
+                                              dotaconstantsHeroes[
+                                                recentMatches.hero_id
+                                              ].localized_name
+                                            }
+                                          </b>
+                                          <br />
+                                          <small>
+                                            KDA:{" "}
+                                            {recentMatches.kills +
+                                              `/` +
+                                              recentMatches.deaths +
+                                              `/` +
+                                              recentMatches.assists}
+                                          </small>
+                                        </h5>
+                                      </div>
+                                      <div className="col-auto">
+                                        <h5
+                                          className={
+                                            (playerTeam == "Radiant" &&
+                                              recentMatches.radiant_win ==
+                                                true) ||
+                                            (playerTeam == "Dire" &&
+                                              recentMatches.radiant_win ==
+                                                false)
+                                              ? "text-success"
+                                              : "text-danger"
+                                          }
+                                          style={{ fontSize: ".975rem" }}
+                                        >
+                                          <small>
+                                            {(playerTeam == "Radiant" &&
+                                              recentMatches.radiant_win ==
+                                                true) ||
+                                            (playerTeam == "Dire" &&
+                                              recentMatches.radiant_win ==
+                                                false)
+                                              ? "Won Match"
+                                              : "Lost Match"}
+                                          </small>
+                                        </h5>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </a>
+                            </div>
+                          </div>
+                        )
+                      }
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
             <footer className={styles.footer}>
               Hosted on{" "}
@@ -347,7 +477,7 @@ function Home() {
               >
                 Vercel
               </a>{" "}
-              | <code>v0.2B</code>
+              | <code>v0.2C</code>
             </footer>
           </div>
         </main>
