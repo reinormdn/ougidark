@@ -363,7 +363,7 @@ function Home() {
                                           </h5>
                                         </div>
                                         <div className="col-auto">
-                                          <h5 style={{ fontSize: ".975rem" }}>
+                                          <h5 className="text-right" style={{ fontSize: ".975rem" }}>
                                             <small>{createdTime}</small>
                                           </h5>
                                         </div>
@@ -471,7 +471,7 @@ function Home() {
                                         </h5>
                                       </div>
                                       <div className="col-auto">
-                                        <h5 style={{ fontSize: ".975rem" }}>
+                                        <h5 className="text-right" style={{ fontSize: ".975rem" }}>
                                           <span>
                                             <small>{matchStart}</small>
                                           </span>
