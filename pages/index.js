@@ -2,11 +2,13 @@ import Head from "next/head"
 import styles from "../styles/Home.module.css"
 import useSWR from "swr"
 import fetch from "unfetch"
-import Link from "next/link"
 import TimeAgo from "javascript-time-ago"
 import en from "javascript-time-ago/locale/en"
 import Tilt from "react-parallax-tilt"
 import * as dotaconstantsHeroes from "dotaconstants/build/heroes.json"
+import Tippy from "@tippyjs/react"
+import "tippy.js/dist/tippy.css"
+import "bootstrap-icons/font/bootstrap-icons.css"
 
 TimeAgo.addLocale(en)
 
@@ -39,7 +41,7 @@ function Home() {
   )
 
   const capitalizeFirst = (str) => {
-    return str.charAt(0).toUpperCase() + str.slice(1)
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
   }
 
   if (
@@ -56,7 +58,9 @@ function Home() {
         <link rel="preconnect" href="https://fonts.gstatic.com" />
       </Head>
 
-      {!anilistActivities || !spotifyCurrentPlaying || !opendotaRecentMatches ? (
+      {!anilistActivities ||
+      !spotifyCurrentPlaying ||
+      !opendotaRecentMatches ? (
         <div
           className={styles.main}
           style={{ justifyContent: "center", minHeight: "100vh" }}
@@ -67,17 +71,12 @@ function Home() {
         </div>
       ) : (
         <main>
-          {/* <Breadcrumbs separator="-" aria-label="breadcrumb">
-          <Link color="inherit" href="/">
-            Home
-          </Link>
-        </Breadcrumbs> */}
-
           <div className="container-xl">
             <header
               className={styles.header}
               style={{
                 backgroundImage: `linear-gradient(transparent, white 93%), url(${anilistActivities.user.data.User.bannerImage})`,
+                backgroundRepeat: `no-repeat`
               }}
             >
               <a
@@ -108,7 +107,6 @@ function Home() {
                 ) : (
                   <h5 className="h5">Listening to Spotify</h5>
                 )}
-                {/* <Tilt tiltReverse={true} tiltMaxAngleX={8} tiltMaxAngleY={8}> */}
                 {!spotifyCurrentPlaying.isPlaying ? (
                   <div className="list-group pb-3 mb-2 rounded-0 border-bottom border-2">
                     <div
@@ -210,18 +208,13 @@ function Home() {
                     </div>
                   </div>
                 )}
-                {/* </Tilt> */}
 
-                <h5 className="h5">Fav. Characters</h5>
-                {/* <div className="list-group">
-                <div className="list-group-item p-3"> */}
-                {/* <div className="card">
-                  <div className="card-body"> */}
-                <div className="row gx-2">
-                  {anilistActivities.user.data.User.favourites.characters.nodes.map(
-                    (usercharafav, i) => {
+                <h5 className="h5">Fav. Anime</h5>
+                <div className="row gx-2 pb-2 mb-2 rounded-0 border-bottom border-2">
+                  {anilistActivities.user.data.User.favourites.anime.nodes.map(
+                    (animefav, i) => {
                       return (
-                        <div className="col-4 col-xl-2_5 mb-2" key={i}>
+                        <div className="col-3 col-xl-2_5 mb-2" key={i}>
                           <Tilt
                             tiltEnable={false}
                             tiltReverse={true}
@@ -230,26 +223,71 @@ function Home() {
                             glareColor="#ffffff3a"
                             glarePosition="all"
                           >
-                            <div>
-                              <a href={usercharafav.siteUrl} target="_blank">
-                                <img
-                                  src={usercharafav.image.large}
-                                  alt={usercharafav.name.full}
-                                  title={usercharafav.name.full}
-                                  className={`${styles.characterImage}`}
-                                />
-                              </a>
-                            </div>
+                            <Tippy
+                              content={
+                                animefav.title.romaji +
+                                ` (` +
+                                animefav.seasonYear +
+                                ` ` +
+                                (animefav.format == "TV" ||
+                                animefav.format == "TV_SHORT" ||
+                                animefav.format == "OVA" ||
+                                animefav.format == "ONA"
+                                  ? animefav.format
+                                  : capitalizeFirst(animefav.format)) +
+                                `)`
+                              }
+                            >
+                              <div>
+                                <a href={animefav.siteUrl} target="_blank">
+                                  <img
+                                    src={animefav.coverImage.medium}
+                                    alt={animefav.title.romaji}
+                                    title={``}
+                                    className={`animeImage`}
+                                  />
+                                </a>
+                              </div>
+                            </Tippy>
                           </Tilt>
                         </div>
                       )
                     }
                   )}
                 </div>
-                {/* </div>
-                </div> */}
-                {/* </div>
-              </div> */}
+
+                <h5 className="h5">Fav. Characters</h5>
+                <div className="row gx-2">
+                  {anilistActivities.user.data.User.favourites.characters.nodes.map(
+                    (usercharafav, i) => {
+                      return (
+                        <div className="col-3 col-xl-2_5 mb-2" key={i}>
+                          <Tilt
+                            tiltEnable={false}
+                            tiltReverse={true}
+                            glareEnable={true}
+                            glareMaxOpacity={0.9}
+                            glareColor="#ffffff3a"
+                            glarePosition="all"
+                          >
+                            <Tippy content={usercharafav.name.full}>
+                              <div>
+                                <a href={usercharafav.siteUrl} target="_blank">
+                                  <img
+                                    src={usercharafav.image.medium}
+                                    alt={usercharafav.name.full}
+                                    title={``}
+                                    className={`characterImage`}
+                                  />
+                                </a>
+                              </div>
+                            </Tippy>
+                          </Tilt>
+                        </div>
+                      )
+                    }
+                  )}
+                </div>
               </div>
               <div className="col-lg-4">
                 <h5 className="h5">Anilist Activity</h5>
@@ -294,12 +332,6 @@ function Home() {
                                 className="position-relative"
                                 style={{ overflow: "hidden" }}
                               >
-                                {/* <img
-                                  src={
-                                    useractivity.media.coverImage.medium
-                                  }
-                                  className="position-absolute w-100 h-100 bg-spotify-current"
-                                /> */}
                                 <a
                                   href={useractivity.siteUrl}
                                   target="_blank"
@@ -363,6 +395,12 @@ function Home() {
                         } else {
                           playerTeam = "Dire"
                         }
+
+                        var match_timestamp = new Date(
+                          recentMatches.start_time * 1000
+                        )
+
+                        var matchStart = timeAgo.format(match_timestamp)
                         return (
                           <div className="list-group mb-2 rounded-0" key={i}>
                             <div
@@ -377,7 +415,10 @@ function Home() {
                                 className="position-absolute w-100 h-100 bg-dota-recent"
                               />
                               <a
-                                href={`#`}
+                                href={
+                                  `https://www.opendota.com/matches/` +
+                                  recentMatches.match_id
+                                }
                                 target="_blank"
                                 className="list-group-item list-group-item-action3 position-relative"
                                 style={{ zIndex: "2" }}
@@ -430,29 +471,34 @@ function Home() {
                                         </h5>
                                       </div>
                                       <div className="col-auto">
-                                        <h5
-                                          className={
-                                            (playerTeam == "Radiant" &&
-                                              recentMatches.radiant_win ==
-                                                true) ||
-                                            (playerTeam == "Dire" &&
-                                              recentMatches.radiant_win ==
-                                                false)
-                                              ? "text-success"
-                                              : "text-danger"
-                                          }
-                                          style={{ fontSize: ".975rem" }}
-                                        >
-                                          <small>
-                                            {(playerTeam == "Radiant" &&
-                                              recentMatches.radiant_win ==
-                                                true) ||
-                                            (playerTeam == "Dire" &&
-                                              recentMatches.radiant_win ==
-                                                false)
-                                              ? "Won Match"
-                                              : "Lost Match"}
-                                          </small>
+                                        <h5 style={{ fontSize: ".975rem" }}>
+                                          <span>
+                                            <small>{matchStart}</small>
+                                          </span>
+                                          <br />
+                                          <span
+                                            className={
+                                              (playerTeam == "Radiant" &&
+                                                recentMatches.radiant_win ==
+                                                  true) ||
+                                              (playerTeam == "Dire" &&
+                                                recentMatches.radiant_win ==
+                                                  false)
+                                                ? "text-success"
+                                                : "text-danger"
+                                            }
+                                          >
+                                            <small>
+                                              {(playerTeam == "Radiant" &&
+                                                recentMatches.radiant_win ==
+                                                  true) ||
+                                              (playerTeam == "Dire" &&
+                                                recentMatches.radiant_win ==
+                                                  false)
+                                                ? "Won Match"
+                                                : "Lost Match"}
+                                            </small>
+                                          </span>
                                         </h5>
                                       </div>
                                     </div>
@@ -469,15 +515,39 @@ function Home() {
               </div>
             </div>
             <footer className={styles.footer}>
-              Hosted on{" "}
-              <a
-                href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Vercel
-              </a>{" "}
-              | <code>v0.2C</code>
+              <div className="row gx-2">
+                <div className="col-auto my-auto">
+                  <a href="https://web.facebook.com/reinormdn174/" target="_blank" className="text-dark">
+                    <i className="bi bi-facebook"></i>
+                  </a>
+                </div>
+                <div className="col-auto my-auto">
+                  <a href="https://www.youtube.com/channel/UC5zUxlnFwpNWxUTWJ-HVdxg" target="_blank" className="text-dark">
+                    <i className="bi bi-youtube"></i>
+                  </a>
+                </div>
+                <div className="col-auto my-auto">
+                  <a href="https://www.instagram.com/reinormdn174/" target="_blank" className="text-dark">
+                    <i className="bi bi-instagram"></i>
+                  </a>
+                </div>
+                <div className="col-auto my-auto">
+                  <a href="https://github.com/reinormdn" target="_blank" className="text-dark">
+                    <i className="bi bi-github"></i>
+                  </a>
+                </div>
+                <div className="col-auto my-auto ms-auto">
+                  Hosted on{" "}
+                  <a
+                    href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Vercel
+                  </a>{" "}
+                  | <code>v0.2D</code>
+                </div>
+              </div>
             </footer>
           </div>
         </main>

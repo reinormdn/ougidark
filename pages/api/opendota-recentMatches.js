@@ -1,5 +1,5 @@
 export const getRecentMatches = async () => {
-  return fetch("https://api.opendota.com/api/players/297095950/matches?limit=5", {
+  return fetch("https://api.opendota.com/api/players/297095950/matches?limit=7", {
     method: "GET",
   })
 }

@@ -46,7 +46,7 @@ export default async (_, res) => {
             }
             bannerImage
             favourites(page: 1) {
-                characters(perPage: 20, page: 1) {
+                characters(perPage: 10, page: 1) {
                     nodes {
                         name {
                             full
@@ -58,6 +58,21 @@ export default async (_, res) => {
                         }
                         siteUrl
                     }
+                }
+                anime(perPage: 5, page: 1) {
+                  nodes {
+                      title {
+                          romaji
+                          native
+                      }
+                      coverImage {
+                          large
+                          medium
+                      }
+                      seasonYear
+                      format
+                      siteUrl
+                  }
                 }
             }
         }

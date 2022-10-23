@@ -63,7 +63,7 @@ a {
 .list-group-item-action3:hover,
 .list-group-item-action3:active {
   color: var(--bs-list-group-action-active-color);
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .list-group-item .spotify-image {
@@ -76,6 +76,26 @@ a {
   width: 6.55rem;
   height: 3.75rem;
   object-fit: cover;
+}
+
+.characterImage {
+  width: 100%;
+  height: 115px;
+  object-fit: cover;
+}
+
+.animeImage {
+  width: 100%;
+  height: 115px;
+  object-fit: cover;
+}
+
+.col-2_5 {
+  flex: 0 0 auto;
+  width: 20%;
+}
+
+@media (min-width: 992px) {
 }
 
 @media (min-width: 1200px) {
