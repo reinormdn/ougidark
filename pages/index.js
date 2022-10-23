@@ -363,7 +363,7 @@ function Home() {
                                           </h5>
                                         </div>
                                         <div className="col-auto">
-                                          <h5 className="text-right" style={{ fontSize: ".975rem" }}>
+                                          <h5 className="text-end" style={{ fontSize: ".975rem" }}>
                                             <small>{createdTime}</small>
                                           </h5>
                                         </div>
@@ -397,7 +397,7 @@ function Home() {
                         }
 
                         var match_timestamp = new Date(
-                          recentMatches.start_time * 1000
+                          (recentMatches.start_time + recentMatches.duration) * 1000
                         )
 
                         var matchStart = timeAgo.format(match_timestamp)
@@ -471,7 +471,7 @@ function Home() {
                                         </h5>
                                       </div>
                                       <div className="col-auto">
-                                        <h5 className="text-right" style={{ fontSize: ".975rem" }}>
+                                        <h5 className="text-end" style={{ fontSize: ".975rem" }}>
                                           <span>
                                             <small>{matchStart}</small>
                                           </span>
