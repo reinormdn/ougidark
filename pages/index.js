@@ -6,7 +6,7 @@ import TimeAgo from "javascript-time-ago"
 import en from "javascript-time-ago/locale/en"
 import Tilt from "react-parallax-tilt"
 import * as dotaconstantsHeroes from "dotaconstants/build/heroes.json"
-import Tippy from "@tippyjs/react"
+import { useEffect, useState } from "react"
 import "tippy.js/dist/tippy.css"
 import "bootstrap-icons/font/bootstrap-icons.css"
 
@@ -17,19 +17,15 @@ const timeAgo = new TimeAgo("en-US")
 
 const fetcher = (url) => fetch(url).then((r) => r.json())
 
-function pad(val) {
-  return val < 10 ? val : val
-}
-
 function Home() {
-  const { data: anilistActivities, erroranilistActivities } = useSWR(
-    "/api/anilist-activities",
-    fetcher,
-    { revalidateOnFocus: true, refreshInterval: 5000 }
-  )
-
   const { data: spotifyCurrentPlaying, errorspotifyCurrentPlaying } = useSWR(
     "/api/spotify-currentPlaying",
+    fetcher,
+    { revalidateOnFocus: true, refreshInterval: 3000 }
+  )
+
+  const { data: anilistActivities, erroranilistActivities } = useSWR(
+    "/api/anilist-activities",
     fetcher,
     { revalidateOnFocus: true, refreshInterval: 5000 }
   )
@@ -44,6 +40,24 @@ function Home() {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
   }
 
+  // const Timer = (start) => {
+  //   const [timer, setTime] = useState(start)
+  //   useEffect(() => {
+  //     const interval = setInterval(() => {
+  //       setTime((currentTime) => {
+  //         if (currentTime < 100) {
+  //           return currentTime + 1
+  //         } else {
+  //           clearInterval(interval)
+  //           return currentTime
+  //         }
+  //       })
+  //     }, 1000)
+  //     return () => clearInterval(interval)
+  //   }, [])
+  //   return <p>{timer}</p>
+  // }
+
   if (
     erroranilistActivities ||
     errorspotifyCurrentPlaying ||
@@ -51,7 +65,13 @@ function Home() {
   )
     return <div>failed to load</div>
   return (
-    <div className={styles.container}>
+    <div
+      className={styles.container}
+      style={{
+        backgroundColor: "#ffffff",
+        minHeight: "100vh",
+      }}
+    >
       <Head>
         <title>ougidark</title>
         <link rel="icon" href="/favicon.ico" />
@@ -71,12 +91,14 @@ function Home() {
         </div>
       ) : (
         <main>
-          <div className="container-xl">
+          <div className="container-xl px-0">
             <header
-              className={styles.header}
+              className={styles.header + " mb-3 mb-lg-0"}
               style={{
-                backgroundImage: `linear-gradient(transparent, white 93%), url(${anilistActivities.user.data.User.bannerImage})`,
-                backgroundRepeat: `no-repeat`
+                backgroundImage: `linear-gradient(transparent, #ffffff 93%), url(${anilistActivities.user.data.User.bannerImage})`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "cover",
+                backgroundPosition: "50% 40%",
               }}
             >
               <a
@@ -99,11 +121,13 @@ function Home() {
                 </a>
               </h1>
             </header>
+          </div>
 
-            <div className="row gx-3">
-              <div className="col-lg-4 d-none d-lg-block">
+          <div className="container-xl">
+            <div className="row gx-3 gy-3">
+              <div className="col-lg-4">
                 {!spotifyCurrentPlaying.isPlaying ? (
-                  <h5 className="h5">Not Listening</h5>
+                  <h5 className="h5">Spotify</h5>
                 ) : (
                   <h5 className="h5">Listening to Spotify</h5>
                 )}
@@ -111,13 +135,13 @@ function Home() {
                   <div className="list-group pb-3 mb-2 rounded-0 border-bottom border-2">
                     <div
                       className="position-relative"
-                      style={{ overflow: "hidden" }}
+                      style={{ overflow: "hidden", zIndex: "1" }}
                     >
                       <div className="list-group-item list-group-item-action position-relative">
                         <div className="row">
                           <div className="col-auto">
                             <img
-                              src={`https://community.spotify.com/t5/image/serverpage/image-id/25294i2836BD1C1A31BDF2?v=v2`}
+                              src={`https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Spotify_App_Logo.svg/2048px-Spotify_App_Logo.svg.png`}
                               alt={`Spotify`}
                               title={`Spotify`}
                               className={`spotify-image`}
@@ -127,12 +151,10 @@ function Home() {
                             <div className="row gx-2 py-2 pe-2">
                               <div className="col">
                                 <h5
-                                  className={`mb-1 ` + `${styles.h5}`}
+                                  className={`mb-1 fs-6`}
                                   style={{ verticalAlign: "middle" }}
                                 >
-                                  <b className="">-</b>
-                                  <br />
-                                  <small>-</small>
+                                  <b className="">Offline</b>
                                 </h5>
                               </div>
                             </div>
@@ -145,7 +167,7 @@ function Home() {
                   <div className="list-group pb-3 mb-2 rounded-0 border-bottom border-2">
                     <div
                       className="position-relative"
-                      style={{ overflow: "hidden" }}
+                      style={{ overflow: "hidden", zIndex: "1" }}
                     >
                       <img
                         src={
@@ -163,7 +185,7 @@ function Home() {
                         className="list-group-item list-group-item-action position-relative"
                         style={{ zIndex: "2" }}
                       >
-                        <div className="row">
+                        <div className="row gx-0">
                           <div className="col-auto">
                             <img
                               src={
@@ -179,28 +201,104 @@ function Home() {
                               className={`spotify-image`}
                             />
                           </div>
-                          <div className="col ps-1 pe-3">
+                          <div className="col ps-1 pe-3 position-relative text-truncate">
                             <div className="row gx-2 py-2 pe-2">
                               <div className="col">
-                                <h5
-                                  className={`mb-1 ` + `${styles.h5}`}
-                                  style={{ verticalAlign: "middle" }}
-                                >
-                                  <b className="text-primary">
-                                    {
-                                      spotifyCurrentPlaying.currentPlaying.item
-                                        .name
-                                    }
-                                  </b>
-                                  <br />
-                                  <small>
-                                    {
-                                      spotifyCurrentPlaying.currentPlaying.item
-                                        .artists[0].name
-                                    }
-                                  </small>
-                                </h5>
+                                <div className="ps-2">
+                                  <h5
+                                    className={`mb-1 fs-6`}
+                                    style={{ verticalAlign: "middle" }}
+                                  >
+                                    <b className="text-dark">
+                                      {
+                                        spotifyCurrentPlaying.currentPlaying
+                                          .item.name
+                                      }
+                                    </b>
+                                    <br />
+                                    <div className="text-truncate">
+                                      <span className="fs-7">
+                                        {spotifyCurrentPlaying.currentPlaying.item.artists.map(
+                                          (item, i) =>
+                                            (i ? ", " : "") + item.name
+                                        )}
+                                      </span>
+                                    </div>
+                                    <div className="row gx-2 mt-1">
+                                      <div className="col-auto me-auto my-auto text-truncate">
+                                        {spotifyCurrentPlaying.currentPlayingPlaylist_name ==
+                                        "" ? (
+                                          ""
+                                        ) : (
+                                          <span className="fs-7">
+                                            <i
+                                              className="bi bi-vinyl-fill"
+                                              style={{
+                                                paddingRight: ".35rem",
+                                              }}
+                                            ></i>
+                                            {
+                                              spotifyCurrentPlaying.currentPlayingPlaylist_name
+                                            }
+                                          </span>
+                                        )}
+                                      </div>
+                                      {spotifyCurrentPlaying
+                                        .currentPlaybackState.shuffle_state ? (
+                                        <div className="col-auto my-auto text-truncate">
+                                          <span className="fs-7">
+                                            <i className="bi bi-shuffle"></i>
+                                          </span>
+                                        </div>
+                                      ) : (
+                                        ""
+                                      )}
+                                      {(() => {
+                                        switch (
+                                          spotifyCurrentPlaying
+                                            .currentPlaybackState.repeat_state
+                                        ) {
+                                          case "track":
+                                            return (
+                                              <div className="col-auto my-auto text-truncate">
+                                                <span className="fs-7">
+                                                  <i className="bi bi-repeat-1"></i>
+                                                </span>
+                                              </div>
+                                            )
+                                          case "context":
+                                            return (
+                                              <div className="col-auto my-auto text-truncate">
+                                                <span className="fs-7">
+                                                  <i className="bi bi-repeat"></i>
+                                                </span>
+                                              </div>
+                                            )
+                                          default:
+                                            return ""
+                                        }
+                                      })()}
+                                    </div>
+                                  </h5>
+                                </div>
                               </div>
+                            </div>
+                            <div
+                              className="progress position-absolute start-0 bottom-0 w-100 rounded-0"
+                              style={{ height: ".25rem" }}
+                            >
+                              <div
+                                className="progress-bar"
+                                style={{
+                                  width:
+                                    (spotifyCurrentPlaying.currentPlaying
+                                      .progress_ms /
+                                      spotifyCurrentPlaying.currentPlaying.item
+                                        .duration_ms) *
+                                      100 +
+                                    "%",
+                                }}
+                              ></div>
                             </div>
                           </div>
                         </div>
@@ -209,88 +307,12 @@ function Home() {
                   </div>
                 )}
 
-                <h5 className="h5">Fav. Anime</h5>
-                <div className="row gx-2 pb-2 mb-2 rounded-0 border-bottom border-2">
-                  {anilistActivities.user.data.User.favourites.anime.nodes.map(
-                    (animefav, i) => {
-                      return (
-                        <div className="col-3 col-xl-2_5 mb-2" key={i}>
-                          <Tilt
-                            tiltEnable={false}
-                            tiltReverse={true}
-                            glareEnable={true}
-                            glareMaxOpacity={0.9}
-                            glareColor="#ffffff3a"
-                            glarePosition="all"
-                          >
-                            <Tippy
-                              content={
-                                animefav.title.romaji +
-                                ` (` +
-                                animefav.seasonYear +
-                                ` ` +
-                                (animefav.format == "TV" ||
-                                animefav.format == "TV_SHORT" ||
-                                animefav.format == "OVA" ||
-                                animefav.format == "ONA"
-                                  ? animefav.format
-                                  : capitalizeFirst(animefav.format)) +
-                                `)`
-                              }
-                            >
-                              <div>
-                                <a href={animefav.siteUrl} target="_blank">
-                                  <img
-                                    src={animefav.coverImage.medium}
-                                    alt={animefav.title.romaji}
-                                    title={``}
-                                    className={`animeImage`}
-                                  />
-                                </a>
-                              </div>
-                            </Tippy>
-                          </Tilt>
-                        </div>
-                      )
-                    }
-                  )}
-                </div>
-
-                <h5 className="h5">Fav. Characters</h5>
-                <div className="row gx-2">
-                  {anilistActivities.user.data.User.favourites.characters.nodes.map(
-                    (usercharafav, i) => {
-                      return (
-                        <div className="col-3 col-xl-2_5 mb-2" key={i}>
-                          <Tilt
-                            tiltEnable={false}
-                            tiltReverse={true}
-                            glareEnable={true}
-                            glareMaxOpacity={0.9}
-                            glareColor="#ffffff3a"
-                            glarePosition="all"
-                          >
-                            <Tippy content={usercharafav.name.full}>
-                              <div>
-                                <a href={usercharafav.siteUrl} target="_blank">
-                                  <img
-                                    src={usercharafav.image.medium}
-                                    alt={usercharafav.name.full}
-                                    title={``}
-                                    className={`characterImage`}
-                                  />
-                                </a>
-                              </div>
-                            </Tippy>
-                          </Tilt>
-                        </div>
-                      )
-                    }
-                  )}
-                </div>
+                {/* <h5 style={{ fontSize: "1rem" }}>
+                  "Every journey has its final day. Don't rush." -Zhongli
+                </h5> */}
               </div>
               <div className="col-lg-4">
-                <h5 className="h5">Anilist Activity</h5>
+                <h5 className="h5">Anime Activity</h5>
                 <div className="row gx-2">
                   {anilistActivities.activities.data.Page.activities.map(
                     (useractivity, i) => {
@@ -330,7 +352,7 @@ function Home() {
                             <div className="list-group mb-2">
                               <div
                                 className="position-relative"
-                                style={{ overflow: "hidden" }}
+                                style={{ overflow: "hidden", zIndex: "1" }}
                               >
                                 <a
                                   href={useractivity.siteUrl}
@@ -352,7 +374,7 @@ function Home() {
                                       <div className="row gx-2 py-2 pe-2">
                                         <div className="col">
                                           <h5
-                                            className={`mb-1 ` + `${styles.h5}`}
+                                            className={`mb-1 fs-6`}
                                             style={{ verticalAlign: "middle" }}
                                           >
                                             <b className="text-primary">
@@ -362,8 +384,11 @@ function Home() {
                                             <small>{status}</small>
                                           </h5>
                                         </div>
-                                        <div className="col-auto">
-                                          <h5 className="text-end" style={{ fontSize: ".975rem" }}>
+                                        <div className="col-lg-auto">
+                                          <h5
+                                            className="text-lg-end"
+                                            style={{ fontSize: ".975rem" }}
+                                          >
                                             <small>{createdTime}</small>
                                           </h5>
                                         </div>
@@ -380,12 +405,12 @@ function Home() {
                   )}
                 </div>
               </div>
-              <div className="col-lg-4 d-none d-lg-block">
+              <div className="col-lg-4">
                 <h5 className="h5">Dota Recent Matches</h5>
                 {!opendotaRecentMatches ? (
                   <div>-</div>
                 ) : (
-                  <div className="pb-2 border-bottom border-2">
+                  <div>
                     {opendotaRecentMatches.recentMatches.map(
                       (recentMatches, i) => {
                         var playerTeam = ""
@@ -397,7 +422,8 @@ function Home() {
                         }
 
                         var match_timestamp = new Date(
-                          (recentMatches.start_time + recentMatches.duration) * 1000
+                          (recentMatches.start_time + recentMatches.duration) *
+                            1000
                         )
 
                         var matchStart = timeAgo.format(match_timestamp)
@@ -405,15 +431,15 @@ function Home() {
                           <div className="list-group mb-2 rounded-0" key={i}>
                             <div
                               className="position-relative"
-                              style={{ overflow: "hidden" }}
+                              style={{ overflow: "hidden", zIndex: "1" }}
                             >
-                              <img
+                              {/* <img
                                 src={
                                   `https://api.opendota.com` +
                                   dotaconstantsHeroes[recentMatches.hero_id].img
                                 }
                                 className="position-absolute w-100 h-100 bg-dota-recent"
-                              />
+                              /> */}
                               <a
                                 href={
                                   `https://www.opendota.com/matches/` +
@@ -424,7 +450,7 @@ function Home() {
                                 style={{ zIndex: "2" }}
                               >
                                 <div className="row">
-                                  <div className="col-auto">
+                                  <div className="col-auto my-auto">
                                     <img
                                       src={
                                         `https://api.opendota.com` +
@@ -449,7 +475,7 @@ function Home() {
                                     <div className="row gx-3 py-2 pe-2">
                                       <div className="col text-truncate">
                                         <h5
-                                          className={`mb-1 ` + `${styles.h5}`}
+                                          className={`mb-0 fs-6`}
                                           style={{ verticalAlign: "middle" }}
                                         >
                                           <b className="text-primary">
@@ -471,7 +497,10 @@ function Home() {
                                         </h5>
                                       </div>
                                       <div className="col-auto">
-                                        <h5 className="text-end" style={{ fontSize: ".975rem" }}>
+                                        <h5
+                                          className="text-end"
+                                          style={{ fontSize: ".975rem" }}
+                                        >
                                           <span>
                                             <small>{matchStart}</small>
                                           </span>
@@ -517,35 +546,45 @@ function Home() {
             <footer className={styles.footer}>
               <div className="row gx-2">
                 <div className="col-auto my-auto">
-                  <a href="https://web.facebook.com/reinormdn174/" target="_blank" className="text-dark">
+                  <a
+                    href="https://web.facebook.com/reinormdn174/"
+                    target="_blank"
+                    className="text-dark"
+                  >
                     <i className="bi bi-facebook"></i>
                   </a>
                 </div>
                 <div className="col-auto my-auto">
-                  <a href="https://www.youtube.com/channel/UC5zUxlnFwpNWxUTWJ-HVdxg" target="_blank" className="text-dark">
+                  <a
+                    href="https://www.youtube.com/channel/UC5zUxlnFwpNWxUTWJ-HVdxg"
+                    target="_blank"
+                    className="text-dark"
+                  >
                     <i className="bi bi-youtube"></i>
                   </a>
                 </div>
                 <div className="col-auto my-auto">
-                  <a href="https://www.instagram.com/reinormdn174/" target="_blank" className="text-dark">
+                  <a
+                    href="https://www.instagram.com/reinormdn174/"
+                    target="_blank"
+                    className="text-dark"
+                  >
                     <i className="bi bi-instagram"></i>
                   </a>
                 </div>
                 <div className="col-auto my-auto">
-                  <a href="https://github.com/reinormdn" target="_blank" className="text-dark">
+                  <a
+                    href="https://github.com/reinormdn"
+                    target="_blank"
+                    className="text-dark"
+                  >
                     <i className="bi bi-github"></i>
                   </a>
                 </div>
-                <div className="col-auto my-auto ms-auto">
-                  Hosted on{" "}
-                  <a
-                    href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Vercel
-                  </a>{" "}
-                  | <code>v0.2D</code>
+                <div className="col-auto my-auto ms-auto fs-6">
+                  <h6 className="mb-0">
+                    <small>@2020</small>
+                  </h6>
                 </div>
               </div>
             </footer>

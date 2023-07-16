@@ -1,3 +1,12 @@
+:root {
+  --bs-blue: #4b7bec;
+  --bs-primary: #4b7bec;
+  --bs-progress-bar-bg: #4b7bec;
+  --bs-link-color: #4b7bec;
+  --bs-link-hover-color: #3867d6;
+  --bs-primary-rgb: 75, 123, 236;
+}
+
 html,
 body {
   padding: 0;
@@ -29,10 +38,18 @@ a {
   top: 2rem;
 }
 
+.list-group .bg-spotify-current {
+  top: 3.5rem;
+}
+
 .list-group:hover .bg-spotify-current,
 .list-group:hover .bg-anilist-activity,
 .list-group:hover .bg-dota-recent {
   top: 0;
+}
+
+.list-group:hover .bg-spotify-current {
+  top: 3.25rem;
 }
 
 .list-group-item {
@@ -47,7 +64,7 @@ a {
 .list-group-item-action:hover,
 .list-group-item-action:active {
   color: var(--bs-list-group-action-active-color);
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .list-group-item-action2:hover,
@@ -63,7 +80,8 @@ a {
 .list-group-item-action3:hover,
 .list-group-item-action3:active {
   color: var(--bs-list-group-action-active-color);
-  background: rgba(255, 255, 255, 0.7);
+  /* background: rgba(255, 255, 255, 0.7); */
+  background-color: var(--bs-list-group-action-active-bg);
 }
 
 .list-group-item .spotify-image {
@@ -73,8 +91,8 @@ a {
 }
 
 .list-group-item .dota-recent-image {
-  width: 6.55rem;
-  height: 3.75rem;
+  width: 4.6rem;
+  height: 2.8rem;
   object-fit: cover;
 }
 
@@ -95,7 +113,36 @@ a {
   width: 20%;
 }
 
+.animate-spin {
+  animation-name: spin;
+  animation-duration: 5000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.fs-7 {
+  font-size: 0.85rem;
+}
+
 @media (min-width: 992px) {
+  .list-group-item .spotify-image {
+    width: 5.25rem;
+    height: 5.25rem;
+  }
+
+  .list-group-item .dota-recent-image {
+    width: 6.6rem;
+    height: 3.8rem;
+  }
 }
 
 @media (min-width: 1200px) {
