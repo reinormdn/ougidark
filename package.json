@@ -13,7 +13,7 @@
     "bootstrap-icons": "^1.9.1",
     "dotaconstants": "^7.13.0",
     "javascript-time-ago": "^2.5.7",
-    "next": "^12.3.1",
+    "next": "^14.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-loading-skeleton": "^3.1.0",
