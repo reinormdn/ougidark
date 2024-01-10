@@ -435,7 +435,7 @@ function Home() {
                             >
                               {/* <img
                                 src={
-                                  `https://api.opendota.com` +
+                                  `https://cdn.cloudflare.steamstatic.com` +
                                   dotaconstantsHeroes[recentMatches.hero_id].img
                                 }
                                 className="position-absolute w-100 h-100 bg-dota-recent"
@@ -453,7 +453,7 @@ function Home() {
                                   <div className="col-auto my-auto">
                                     <img
                                       src={
-                                        `https://api.opendota.com` +
+                                        `https://cdn.cloudflare.steamstatic.com` +
                                         dotaconstantsHeroes[
                                           recentMatches.hero_id
                                         ].img
