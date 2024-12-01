@@ -351,7 +351,7 @@ function Home() {
                               style={{ overflow: "hidden", zIndex: "1" }}
                             >
                               <img
-                                src={useractivity.media.coverImage.extraLarge}
+                                src={useractivity.media.bannerImage}
                                 className="position-absolute w-100 h-100 bg-anilist-activity"
                               />
                               <a
@@ -379,7 +379,15 @@ function Home() {
                                           className={`mb-1 fs-6`}
                                           style={{ verticalAlign: "middle" }}
                                         >
-                                          <b className="text-link" style={{ color: `${useractivity.media.coverImage.extraLarge || "#000"} !important` }}>
+                                          <b
+                                            className="text-link"
+                                            style={{
+                                              color: `${
+                                                useractivity.media.coverImage
+                                                  .extraLarge || "#000"
+                                              } !important`,
+                                            }}
+                                          >
                                             {useractivity.media.title.romaji}
                                           </b>
                                           <br />
@@ -513,7 +521,9 @@ function Home() {
                                             style={{ fontSize: ".975rem" }}
                                           >
                                             <span>
-                                              <small className="text-small">{matchStart}</small>
+                                              <small className="text-small">
+                                                {matchStart}
+                                              </small>
                                             </span>
                                             <br />
                                             <span

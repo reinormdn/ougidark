@@ -15,6 +15,7 @@ export default async (_, res) => {
                             medium
                             color
                         }
+                        bannerImage
                     }
                     status
                     progress
