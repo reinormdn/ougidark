@@ -21,13 +21,13 @@ function Home() {
   const { data: spotifyCurrentPlaying, errorspotifyCurrentPlaying } = useSWR(
     "/api/spotify-currentPlaying",
     fetcher,
-    { revalidateOnFocus: true, refreshInterval: 3000 }
+    { revalidateOnFocus: true, refreshInterval: 10000 }
   )
 
   const { data: anilistActivities, erroranilistActivities } = useSWR(
     "/api/anilist-activities",
     fetcher,
-    { revalidateOnFocus: true, refreshInterval: 5000 }
+    { revalidateOnFocus: true, refreshInterval: 10000 }
   )
 
   const { data: opendotaRecentMatches, erroropendotaRecentMatches } = useSWR(
@@ -91,7 +91,7 @@ function Home() {
         </div>
       ) : (
         <main>
-          <div className="container-xl px-0">
+          <div className="px-0">
             <header
               className={styles.header + " mb-3 mb-lg-0"}
               style={{
@@ -114,6 +114,7 @@ function Home() {
 
               <h1 className={styles.headingXl + " text-center"}>
                 <a
+                  className="text-dark"
                   href={anilistActivities.user.data.User.siteUrl}
                   target="_blank"
                 >
@@ -225,7 +226,7 @@ function Home() {
                                       </span>
                                     </div>
                                     <div className="row gx-2 mt-1">
-                                      <div className="col-auto me-auto my-auto text-truncate">
+                                      <div className="col-9 me-auto my-auto text-truncate">
                                         {spotifyCurrentPlaying.currentPlayingPlaylist_name ==
                                         "" ? (
                                           ""
@@ -288,7 +289,7 @@ function Home() {
                               style={{ height: ".25rem" }}
                             >
                               <div
-                                className="progress-bar"
+                                className="progress-bar progress-bar-custom"
                                 style={{
                                   width:
                                     (spotifyCurrentPlaying.currentPlaying
@@ -344,61 +345,63 @@ function Home() {
 
                       return (
                         <div className="col-xl-12" key={i}>
-                          <Tilt
-                            tiltReverse={true}
-                            tiltMaxAngleX={8}
-                            tiltMaxAngleY={8}
-                          >
-                            <div className="list-group mb-2">
-                              <div
-                                className="position-relative"
-                                style={{ overflow: "hidden", zIndex: "1" }}
+                          <div className="list-group mb-2">
+                            <div
+                              className="position-relative"
+                              style={{ overflow: "hidden", zIndex: "1" }}
+                            >
+                              <img
+                                src={useractivity.media.coverImage.extraLarge}
+                                className="position-absolute w-100 h-100 bg-anilist-activity"
+                              />
+                              <a
+                                href={useractivity.siteUrl}
+                                target="_blank"
+                                className="list-group-item list-group-item-action2 flex-column align-items-start"
                               >
-                                <a
-                                  href={useractivity.siteUrl}
-                                  target="_blank"
-                                  className="list-group-item list-group-item-action2 flex-column align-items-start"
-                                >
-                                  <div className="row">
-                                    <div className="col-auto">
-                                      <img
-                                        src={
-                                          useractivity.media.coverImage.medium
-                                        }
-                                        alt={useractivity.media.title.romaji}
-                                        title={useractivity.media.title.romaji}
-                                        className={`${styles.headerCoverImage}`}
-                                      />
-                                    </div>
-                                    <div className="col ps-1 pe-3">
-                                      <div className="row gx-2 py-2 pe-2">
-                                        <div className="col">
-                                          <h5
-                                            className={`mb-1 fs-6`}
-                                            style={{ verticalAlign: "middle" }}
-                                          >
-                                            <b className="text-primary">
-                                              {useractivity.media.title.romaji}
-                                            </b>
-                                            <br />
-                                            <small>{status}</small>
-                                          </h5>
-                                        </div>
-                                        <div className="col-lg-auto">
-                                          <h5
-                                            className="text-lg-end"
-                                            style={{ fontSize: ".975rem" }}
-                                          >
-                                            <small>{createdTime}</small>
-                                          </h5>
-                                        </div>
+                                <div className="row">
+                                  <div className="col-auto">
+                                    <img
+                                      src={useractivity.media.coverImage.medium}
+                                      alt={useractivity.media.title.romaji}
+                                      title={useractivity.media.title.romaji}
+                                      className={`${styles.headerCoverImage}`}
+                                      style={{
+                                        borderBottom:
+                                          "3px solid var(--custom-color-1)",
+                                      }}
+                                    />
+                                  </div>
+                                  <div className="col ps-1 pe-3">
+                                    <div className="row gx-2 py-2 pe-2">
+                                      <div className="col">
+                                        <h5
+                                          className={`mb-1 fs-6`}
+                                          style={{ verticalAlign: "middle" }}
+                                        >
+                                          <b className="text-link" style={{ color: `${useractivity.media.coverImage.extraLarge || "#000"} !important` }}>
+                                            {useractivity.media.title.romaji}
+                                          </b>
+                                          <br />
+                                          <small>{status}</small>
+                                        </h5>
+                                      </div>
+                                      <div className="col-lg-auto">
+                                        <h5
+                                          className="text-lg-end"
+                                          style={{ fontSize: ".975rem" }}
+                                        >
+                                          <small className="text-small">
+                                            {createdTime}
+                                          </small>
+                                        </h5>
                                       </div>
                                     </div>
                                   </div>
-                                </a>
-                              </div>
+                                </div>
+                              </a>
                             </div>
-                          </Tilt>
+                          </div>
                         </div>
                       )
                     }
@@ -411,8 +414,9 @@ function Home() {
                   <div>-</div>
                 ) : (
                   <div>
-                    {opendotaRecentMatches.recentMatches.map(
-                      (recentMatches, i) => {
+                    {opendotaRecentMatches.recentMatches
+                      .slice(0, 9)
+                      .map((recentMatches, i) => {
                         var playerTeam = ""
 
                         if (recentMatches.player_slot <= 127) {
@@ -428,117 +432,124 @@ function Home() {
 
                         var matchStart = timeAgo.format(match_timestamp)
                         return (
-                          <div className="list-group mb-2 rounded-0" key={i}>
-                            <div
-                              className="position-relative"
-                              style={{ overflow: "hidden", zIndex: "1" }}
-                            >
-                              {/* <img
-                                src={
-                                  `https://cdn.cloudflare.steamstatic.com` +
-                                  dotaconstantsHeroes[recentMatches.hero_id].img
-                                }
-                                className="position-absolute w-100 h-100 bg-dota-recent"
-                              /> */}
-                              <a
-                                href={
-                                  `https://www.opendota.com/matches/` +
-                                  recentMatches.match_id
-                                }
-                                target="_blank"
-                                className="list-group-item list-group-item-action3 position-relative"
-                                style={{ zIndex: "2" }}
+                          <Tilt
+                            tiltReverse={true}
+                            tiltMaxAngleX={8}
+                            tiltMaxAngleY={8}
+                          >
+                            <div className="list-group mb-2 rounded-0" key={i}>
+                              <div
+                                className="position-relative"
+                                style={{ overflow: "hidden", zIndex: "1" }}
                               >
-                                <div className="row">
-                                  <div className="col-auto my-auto">
-                                    <img
-                                      src={
-                                        `https://cdn.cloudflare.steamstatic.com` +
-                                        dotaconstantsHeroes[
-                                          recentMatches.hero_id
-                                        ].img
-                                      }
-                                      alt={
-                                        dotaconstantsHeroes[
-                                          recentMatches.hero_id
-                                        ].localized_name
-                                      }
-                                      title={
-                                        dotaconstantsHeroes[
-                                          recentMatches.hero_id
-                                        ].localized_name
-                                      }
-                                      className={`dota-recent-image`}
-                                    />
-                                  </div>
-                                  <div className="col ps-1 pe-3">
-                                    <div className="row gx-3 py-2 pe-2">
-                                      <div className="col text-truncate">
-                                        <h5
-                                          className={`mb-0 fs-6`}
-                                          style={{ verticalAlign: "middle" }}
-                                        >
-                                          <b className="text-primary">
-                                            {
-                                              dotaconstantsHeroes[
-                                                recentMatches.hero_id
-                                              ].localized_name
-                                            }
-                                          </b>
-                                          <br />
-                                          <small>
-                                            KDA:{" "}
-                                            {recentMatches.kills +
-                                              `/` +
-                                              recentMatches.deaths +
-                                              `/` +
-                                              recentMatches.assists}
-                                          </small>
-                                        </h5>
-                                      </div>
-                                      <div className="col-auto">
-                                        <h5
-                                          className="text-end"
-                                          style={{ fontSize: ".975rem" }}
-                                        >
-                                          <span>
-                                            <small>{matchStart}</small>
-                                          </span>
-                                          <br />
-                                          <span
-                                            className={
-                                              (playerTeam == "Radiant" &&
-                                                recentMatches.radiant_win ==
-                                                  true) ||
-                                              (playerTeam == "Dire" &&
-                                                recentMatches.radiant_win ==
-                                                  false)
-                                                ? "text-success"
-                                                : "text-danger"
-                                            }
+                                <img
+                                  src={
+                                    `https://cdn.cloudflare.steamstatic.com` +
+                                    dotaconstantsHeroes[recentMatches.hero_id]
+                                      .img
+                                  }
+                                  className="position-absolute w-100 h-100 bg-dota-recent"
+                                />
+                                <a
+                                  href={
+                                    `https://www.opendota.com/matches/` +
+                                    recentMatches.match_id
+                                  }
+                                  target="_blank"
+                                  className="list-group-item list-group-item-action3 position-relative"
+                                  style={{ zIndex: "2" }}
+                                >
+                                  <div className="row">
+                                    <div className="col-auto my-auto">
+                                      <img
+                                        src={
+                                          `https://cdn.cloudflare.steamstatic.com` +
+                                          dotaconstantsHeroes[
+                                            recentMatches.hero_id
+                                          ].img
+                                        }
+                                        alt={
+                                          dotaconstantsHeroes[
+                                            recentMatches.hero_id
+                                          ].localized_name
+                                        }
+                                        title={
+                                          dotaconstantsHeroes[
+                                            recentMatches.hero_id
+                                          ].localized_name
+                                        }
+                                        className={`dota-recent-image`}
+                                      />
+                                    </div>
+                                    <div className="col ps-1 pe-3">
+                                      <div className="row gx-3 py-2 pe-2">
+                                        <div className="col">
+                                          <h5
+                                            className={`mb-0 fs-6`}
+                                            style={{ verticalAlign: "middle" }}
                                           >
+                                            <div className="">
+                                              <b className="text-dark">
+                                                {
+                                                  dotaconstantsHeroes[
+                                                    recentMatches.hero_id
+                                                  ].localized_name
+                                                }
+                                              </b>
+                                            </div>
                                             <small>
-                                              {(playerTeam == "Radiant" &&
-                                                recentMatches.radiant_win ==
-                                                  true) ||
-                                              (playerTeam == "Dire" &&
-                                                recentMatches.radiant_win ==
-                                                  false)
-                                                ? "Won Match"
-                                                : "Lost Match"}
+                                              KDA:{" "}
+                                              {recentMatches.kills +
+                                                `/` +
+                                                recentMatches.deaths +
+                                                `/` +
+                                                recentMatches.assists}
                                             </small>
-                                          </span>
-                                        </h5>
+                                          </h5>
+                                        </div>
+                                        <div className="col-auto">
+                                          <h5
+                                            className="text-end"
+                                            style={{ fontSize: ".975rem" }}
+                                          >
+                                            <span>
+                                              <small className="text-small">{matchStart}</small>
+                                            </span>
+                                            <br />
+                                            <span
+                                              className={
+                                                (playerTeam == "Radiant" &&
+                                                  recentMatches.radiant_win ==
+                                                    true) ||
+                                                (playerTeam == "Dire" &&
+                                                  recentMatches.radiant_win ==
+                                                    false)
+                                                  ? "text-success"
+                                                  : "text-danger"
+                                              }
+                                            >
+                                              <small>
+                                                {(playerTeam == "Radiant" &&
+                                                  recentMatches.radiant_win ==
+                                                    true) ||
+                                                (playerTeam == "Dire" &&
+                                                  recentMatches.radiant_win ==
+                                                    false)
+                                                  ? "Won Match"
+                                                  : "Lost Match"}
+                                              </small>
+                                            </span>
+                                          </h5>
+                                        </div>
                                       </div>
                                     </div>
                                   </div>
-                                </div>
-                              </a>
+                                </a>
+                              </div>
                             </div>
-                          </div>
+                          </Tilt>
                         )
-                      }
-                    )}
+                      })}
                   </div>
                 )}
               </div>
@@ -549,7 +560,7 @@ function Home() {
                   <a
                     href="https://web.facebook.com/reinormdn174/"
                     target="_blank"
-                    className="text-dark"
+                    className="text-dark text-hover"
                   >
                     <i className="bi bi-facebook"></i>
                   </a>
@@ -558,7 +569,7 @@ function Home() {
                   <a
                     href="https://www.youtube.com/channel/UC5zUxlnFwpNWxUTWJ-HVdxg"
                     target="_blank"
-                    className="text-dark"
+                    className="text-dark text-hover"
                   >
                     <i className="bi bi-youtube"></i>
                   </a>
@@ -567,7 +578,7 @@ function Home() {
                   <a
                     href="https://www.instagram.com/reinormdn174/"
                     target="_blank"
-                    className="text-dark"
+                    className="text-dark text-hover"
                   >
                     <i className="bi bi-instagram"></i>
                   </a>
@@ -576,7 +587,7 @@ function Home() {
                   <a
                     href="https://github.com/reinormdn"
                     target="_blank"
-                    className="text-dark"
+                    className="text-dark text-hover"
                   >
                     <i className="bi bi-github"></i>
                   </a>

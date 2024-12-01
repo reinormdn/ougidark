@@ -10,8 +10,10 @@ export default async (_, res) => {
                             romaji
                         }
                         coverImage {
+                            extraLarge
                             large
                             medium
+                            color
                         }
                     }
                     status
