@@ -11,7 +11,7 @@
     "@tippyjs/react": "^4.2.6",
     "bootstrap": "^5.2.2",
     "bootstrap-icons": "^1.9.1",
-    "dotaconstants": "^7.13.0",
+    "dotaconstants": "^9.3.0",
     "javascript-time-ago": "^2.5.7",
     "next": "^14.0.1",
     "react": "18.2.0",
