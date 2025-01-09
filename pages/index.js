@@ -351,7 +351,10 @@ function Home() {
                               style={{ overflow: "hidden", zIndex: "1" }}
                             >
                               <img
-                                src={useractivity.media.bannerImage}
+                                src={
+                                  useractivity.media.bannerImage ??
+                                  useractivity.media.coverImage.extraLarge
+                                }
                                 className="position-absolute w-100 h-100 bg-anilist-activity"
                               />
                               <a
@@ -375,24 +378,27 @@ function Home() {
                                   <div className="col ps-1 pe-3">
                                     <div className="row gx-2 py-2 pe-2">
                                       <div className="col">
-                                        <h5
-                                          className={`mb-1 fs-6`}
-                                          style={{ verticalAlign: "middle" }}
-                                        >
-                                          <b
-                                            className="text-link"
-                                            style={{
-                                              color: `${
-                                                useractivity.media.coverImage
-                                                  .extraLarge || "#000"
-                                              } !important`,
-                                            }}
+                                        <div className="truncate-3-lines">
+                                          <h5
+                                            className={`mb-0 fs-6`}
+                                            style={{ verticalAlign: "middle" }}
                                           >
-                                            {useractivity.media.title.romaji}
-                                          </b>
-                                          <br />
+                                            <b
+                                              className="text-link"
+                                              style={{
+                                                color: `${
+                                                  useractivity.media.coverImage
+                                                    .extraLarge || "#000"
+                                                } !important`,
+                                              }}
+                                            >
+                                              {useractivity.media.title.romaji}
+                                            </b>
+                                          </h5>
+                                        </div>
+                                        <p className={`mb-0 fs-6`} style={{ lineHeight: "1.1" }}>
                                           <small>{status}</small>
-                                        </h5>
+                                        </p>
                                       </div>
                                       <div className="col-lg-auto">
                                         <h5

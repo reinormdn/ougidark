@@ -3,7 +3,7 @@
 .container {
   padding: 0;
   margin: 0;
-  font-family: 'Open Sans', sans-serif;
+  font-family: "Open Sans", sans-serif;
   line-height: 1.6;
   font-size: 18px;
   /* padding: 0 1rem; */
@@ -22,10 +22,10 @@
 
 .footer {
   width: 100%;
-  font-family: 'Open Sans', sans-serif;
+  font-family: "Open Sans", sans-serif;
   border-top: 1px solid #eaeaea;
   text-align: right;
-  margin-top: .25rem;
+  margin-top: 0.25rem;
 }
 
 .footer img {
@@ -117,7 +117,7 @@
   flex-direction: column;
   align-items: center;
   padding-top: 1rem;
-  padding-bottom: .75rem;
+  padding-bottom: 0.75rem;
 }
 
 .headerHomeImage {
@@ -128,8 +128,14 @@
 
 .headerCoverImage {
   width: 4.5rem;
-  height: 6.05rem;
+  height: 100%;
   object-fit: cover;
+}
+
+@media (min-width: 992px) {
+  .headerCoverImage {
+    height: 6.05rem;
+  }
 }
 
 .borderCircle {
@@ -139,8 +145,8 @@
 .headingXl {
   font-size: 1.5rem;
   font-weight: 600;
-  margin: .35rem 0 0 0;
-  font-family: 'Roboto Mono', monospace;
+  margin: 0.35rem 0 0 0;
+  font-family: "Roboto Mono", monospace;
 }
 
 @media (max-width: 600px) {
