@@ -40,6 +40,43 @@ function Home() {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
   }
 
+  //
+  const [localProgress, setLocalProgress] = useState(0)
+
+  useEffect(() => {
+    if (!spotifyCurrentPlaying) return
+
+    setLocalProgress(spotifyCurrentPlaying.currentPlaying.progress_ms)
+
+    const interval = setInterval(() => {
+      setLocalProgress((prev) => prev + 1000)
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [spotifyCurrentPlaying])
+
+  const duration = spotifyCurrentPlaying.currentPlaying.item.duration_ms || 1
+  const progressPercent = Math.min((localProgress / duration) * 100, 100)
+
+  //
+  const [time, setTime] = useState("")
+
+  useEffect(() => {
+    const updateTime = () => {
+      setTime(
+        new Date().toLocaleString("id-ID", {
+          dateStyle: "full",
+          timeStyle: "long",
+        })
+      )
+    }
+
+    updateTime()
+    const interval = setInterval(updateTime, 1000)
+
+    return () => clearInterval(interval)
+  }, [])
+
   // const Timer = (start) => {
   //   const [timer, setTime] = useState(start)
   //   useEffect(() => {
@@ -291,13 +328,8 @@ function Home() {
                               <div
                                 className="progress-bar progress-bar-custom"
                                 style={{
-                                  width:
-                                    (spotifyCurrentPlaying.currentPlaying
-                                      .progress_ms /
-                                      spotifyCurrentPlaying.currentPlaying.item
-                                        .duration_ms) *
-                                      100 +
-                                    "%",
+                                  width: `${progressPercent}%`,
+                                  transition: "width 0.5s linear",
                                 }}
                               ></div>
                             </div>
@@ -308,6 +340,7 @@ function Home() {
                   </div>
                 )}
 
+                <p style={{ fontSize: ".9rem" }}>{time}</p>
                 {/* <h5 style={{ fontSize: "1rem" }}>
                   "Every journey has its final day. Don't rush." -Zhongli
                 </h5> */}
@@ -396,7 +429,10 @@ function Home() {
                                             </b>
                                           </h5>
                                         </div>
-                                        <p className={`mb-0 fs-6`} style={{ lineHeight: "1.1" }}>
+                                        <p
+                                          className={`mb-0 fs-6`}
+                                          style={{ lineHeight: "1.1" }}
+                                        >
                                           <small>{status}</small>
                                         </p>
                                       </div>
