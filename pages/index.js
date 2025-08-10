@@ -44,7 +44,7 @@ function Home() {
   const [localProgress, setLocalProgress] = useState(0)
 
   useEffect(() => {
-    if (!spotifyCurrentPlaying) return
+    if (!spotifyCurrentPlaying?.isPlaying) return
 
     setLocalProgress(spotifyCurrentPlaying.currentPlaying.progress_ms)
 
@@ -55,7 +55,7 @@ function Home() {
     return () => clearInterval(interval)
   }, [spotifyCurrentPlaying])
 
-  const duration = spotifyCurrentPlaying.currentPlaying.item.duration_ms || 1
+  const duration = spotifyCurrentPlaying?.isPlaying ? spotifyCurrentPlaying.currentPlaying.item.duration_ms : 1
   const progressPercent = Math.min((localProgress / duration) * 100, 100)
 
   //
