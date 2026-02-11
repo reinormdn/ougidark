@@ -5,7 +5,7 @@ import fetch from "unfetch"
 import TimeAgo from "javascript-time-ago"
 import en from "javascript-time-ago/locale/en"
 import Tilt from "react-parallax-tilt"
-import * as dotaconstantsHeroes from "dotaconstants/build/heroes.json"
+import { heroes as dotaconstantsHeroes } from "dotaconstants"
 import { useEffect, useState } from "react"
 import "tippy.js/dist/tippy.css"
 import "bootstrap-icons/font/bootstrap-icons.css"
@@ -21,19 +21,19 @@ function Home() {
   const { data: spotifyCurrentPlaying, errorspotifyCurrentPlaying } = useSWR(
     "/api/spotify-currentPlaying",
     fetcher,
-    { revalidateOnFocus: true, refreshInterval: 10000 }
+    { revalidateOnFocus: true, refreshInterval: 10000 },
   )
 
   const { data: anilistActivities, erroranilistActivities } = useSWR(
     "/api/anilist-activities",
     fetcher,
-    { revalidateOnFocus: true, refreshInterval: 10000 }
+    { revalidateOnFocus: true, refreshInterval: 10000 },
   )
 
   const { data: opendotaRecentMatches, erroropendotaRecentMatches } = useSWR(
     "/api/opendota-recentMatches",
     fetcher,
-    { revalidateOnFocus: true, refreshInterval: 10000 }
+    { revalidateOnFocus: true, refreshInterval: 10000 },
   )
 
   const capitalizeFirst = (str) => {
@@ -55,7 +55,9 @@ function Home() {
     return () => clearInterval(interval)
   }, [spotifyCurrentPlaying])
 
-  const duration = spotifyCurrentPlaying?.isPlaying ? spotifyCurrentPlaying.currentPlaying.item.duration_ms : 1
+  const duration = spotifyCurrentPlaying?.isPlaying
+    ? spotifyCurrentPlaying.currentPlaying.item.duration_ms
+    : 1
   const progressPercent = Math.min((localProgress / duration) * 100, 100)
 
   //
@@ -67,7 +69,7 @@ function Home() {
         new Date().toLocaleString("id-ID", {
           dateStyle: "full",
           timeStyle: "long",
-        })
+        }),
       )
     }
 
@@ -258,7 +260,7 @@ function Home() {
                                       <span className="fs-7">
                                         {spotifyCurrentPlaying.currentPlaying.item.artists.map(
                                           (item, i) =>
-                                            (i ? ", " : "") + item.name
+                                            (i ? ", " : "") + item.name,
                                         )}
                                       </span>
                                     </div>
@@ -352,7 +354,7 @@ function Home() {
                     (useractivity, i) => {
                       var current_timestamp = new Date()
                       var activity_timestamp = new Date(
-                        useractivity.createdAt * 1000
+                        useractivity.createdAt * 1000,
                       )
 
                       var msPerMinute = 60 * 1000
@@ -454,7 +456,7 @@ function Home() {
                           </div>
                         </div>
                       )
-                    }
+                    },
                   )}
                 </div>
               </div>
@@ -477,7 +479,7 @@ function Home() {
 
                         var match_timestamp = new Date(
                           (recentMatches.start_time + recentMatches.duration) *
-                            1000
+                            1000,
                         )
 
                         var matchStart = timeAgo.format(match_timestamp)
@@ -495,8 +497,8 @@ function Home() {
                                 <img
                                   src={
                                     `https://cdn.cloudflare.steamstatic.com` +
-                                    dotaconstantsHeroes[recentMatches.hero_id]
-                                      .img
+                                      dotaconstantsHeroes[recentMatches.hero_id]
+                                        ?.img ?? ""
                                   }
                                   className="position-absolute w-100 h-100 bg-dota-recent"
                                 />
@@ -516,17 +518,17 @@ function Home() {
                                           `https://cdn.cloudflare.steamstatic.com` +
                                           dotaconstantsHeroes[
                                             recentMatches.hero_id
-                                          ].img
+                                          ]?.img ?? ""
                                         }
                                         alt={
                                           dotaconstantsHeroes[
                                             recentMatches.hero_id
-                                          ].localized_name
+                                          ]?.localized_name ?? ""
                                         }
                                         title={
                                           dotaconstantsHeroes[
                                             recentMatches.hero_id
-                                          ].localized_name
+                                          ]?.localized_name ?? ""
                                         }
                                         className={`dota-recent-image`}
                                       />
@@ -543,7 +545,7 @@ function Home() {
                                                 {
                                                   dotaconstantsHeroes[
                                                     recentMatches.hero_id
-                                                  ].localized_name
+                                                  ]?.localized_name ?? ""
                                                 }
                                               </b>
                                             </div>
